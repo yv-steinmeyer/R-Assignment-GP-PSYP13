@@ -1,0 +1,59 @@
+################################ Home Assignment Geoffrey Patching ########################################
+
+######################################## Assignment 3 ######################################################
+
+######################################## Getting Started ##################################################
+
+setwd("~/Uni Lund/1. Semester/PSYP13 - Advanced Scientific Methods in Psychology/Subcourse 1 - Quantitative data analysis")
+
+require(psych)
+require(lsr)
+require(car)
+require(ggplot2)
+require (MVA)
+require(reshape2)
+require(stats)
+require(statsr)
+require(fdistr)
+require(stats4)
+
+source("GraphPlot.R")
+
+######################################### Monte Carlo Simulation for Power Analysis ###########################
+
+library(WebPower)
+example <- wp.correlation(n = seq(10,50,1), r = 0.35, power = NULL, alpha = 0.05, alternative = c("two.sided", "less", "greater"))
+plot(example,type='b')
+
+
+############################################# 
+nSims <- 100
+nSub < -50
+df1 = 4-1
+
+pb <-txtProgressBar(min = 0, max = 100, initial = 0, style = 3),
+for (p in 10:nSub) {# loop over the simulations for each sample size of interest
+  df2 = 4*p - 4
+  count = 0
+  for (i in 1:nSims) {
+    v1 = rnorm(n = p, mean = -0.5,sd = 1) 
+    v2 = rnorm(n = p, mean = 0,sd = 1)
+    v3 = rnorm(n = p, mean = 0,sd = 1)
+    v4 = rnorm(n = p, mean = 0.5,sd = 1)
+    mean.v1 = mean(v1)
+    mean.v2 = mean(v2)
+    mean.v3 = mean(v3)
+    mean.v4 = mean(v4)
+    Cohens.F = ((mean.v1-0)**2 + (mean.v2-0)**2 + (mean.v3-0)**2 + (mean.v4-0)**2)**0.5
+    Lambda = Cohens.F*Cohens.F*p*4
+    F_Test = noncentralFtail(df1, df2, Lambda, Fcrit(df1, df2))
+    if (F_Test >= 0.95){
+      count = count + 1
+    }
+    if (i == 100)
+    {
+      print("Sample Size: " + p + " percentage: " + count/100)
+    }
+  }
+}
+  
